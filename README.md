@@ -1,5 +1,6 @@
 # RFID DATA REQUIRE
 rfid_out_txt.java ------ 输出为txt
+
 rfid.java ------ print 在终端
 
 
