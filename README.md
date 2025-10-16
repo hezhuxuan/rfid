@@ -1,3 +1,9 @@
+# RFID DATA REQUIRE
+rfid_out_txt.java ------ 输出为txt
+rfid.java ------ print 在终端
+
+
+
 # RFID Data Processing Tool
 
 This tool processes RFID tag data from text files and organizes it into Excel spreadsheets.
