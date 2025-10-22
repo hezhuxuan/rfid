@@ -1,0 +1,132 @@
+Open serial port: 0
+Get reader information: 0
+Firmware Version: V1.24
+Antenna 1
+Antenna Connection Status: 1
+Set antenna multiplexing: 0
+No tags detected after 20 queries.
+No tags detected after 20 queries.
+No tags detected after 20 queries.
+No tags detected after 20 queries.
+  Tag EPC: E2806894200050241888B0AE
+    Reads: 1/20
+    Packet Loss Rate: 95.00%
+    RSSI: 60 dBm
+    Initial Phase: 37.50°
+    Final Phase: 35.58°
+    Reported Frequency: 841.125 MHz
+------------------------------------
+No tags detected after 20 queries.
+No tags detected after 20 queries.
+No tags detected after 20 queries.
+No tags detected after 20 queries.
+  Tag EPC: E2806894200050241888B0AE
+    Reads: 3/20
+    Packet Loss Rate: 85.00%
+    RSSI: 58 dBm
+    Initial Phase: 52.72°
+    Final Phase: 45.59°
+    Reported Frequency: 842.375 MHz
+------------------------------------
+  Tag EPC: E2806894200050241888B0AE
+    Reads: 11/20
+    Packet Loss Rate: 45.00%
+    RSSI: 58 dBm
+    Initial Phase: 231.51°
+    Final Phase: 233.86°
+    Reported Frequency: 842.625 MHz
+------------------------------------
+  Tag EPC: E2806894200050241888B0AE
+    Reads: 15/20
+    Packet Loss Rate: 25.00%
+    RSSI: 58 dBm
+    Initial Phase: 70.47°
+    Final Phase: 65.42°
+    Reported Frequency: 842.875 MHz
+------------------------------------
+  Tag EPC: E2806894200050241888B0AE
+    Reads: 15/20
+    Packet Loss Rate: 25.00%
+    RSSI: 59 dBm
+    Initial Phase: 246.30°
+    Final Phase: 245.60°
+    Reported Frequency: 843.125 MHz
+------------------------------------
+  Tag EPC: E2806894200050241888B0AE
+    Reads: 16/20
+    Packet Loss Rate: 20.00%
+    RSSI: 62 dBm
+    Initial Phase: 80.13°
+    Final Phase: 80.65°
+    Reported Frequency: 843.375 MHz
+------------------------------------
+  Tag EPC: E2806894200050241888B0AE
+    Reads: 16/20
+    Packet Loss Rate: 20.00%
+    RSSI: 58 dBm
+    Initial Phase: 261.70°
+    Final Phase: 265.44°
+    Reported Frequency: 843.625 MHz
+------------------------------------
+  Tag EPC: E2806894200050241888B0AE
+    Reads: 14/20
+    Packet Loss Rate: 30.00%
+    RSSI: 61 dBm
+    Initial Phase: 94.48°
+    Final Phase: 94.05°
+    Reported Frequency: 843.875 MHz
+------------------------------------
+  Tag EPC: E2806894200050241888B0AE
+    Reads: 20/20
+    Packet Loss Rate: 0.00%
+    RSSI: 60 dBm
+    Initial Phase: 99.70°
+    Final Phase: 100.22°
+    Reported Frequency: 844.125 MHz
+------------------------------------
+  Tag EPC: E2806894200050241888B0AE
+    Reads: 20/20
+    Packet Loss Rate: 0.00%
+    RSSI: 60 dBm
+    Initial Phase: 288.75°
+    Final Phase: 285.19°
+    Reported Frequency: 844.375 MHz
+------------------------------------
+  Tag EPC: E2806894200050241888B0AE
+    Reads: 20/20
+    Packet Loss Rate: 0.00%
+    RSSI: 60 dBm
+    Initial Phase: 110.66°
+    Final Phase: 115.71°
+    Reported Frequency: 844.625 MHz
+------------------------------------
+  Tag EPC: E2806894200050241888B0AE
+    Reads: 20/20
+    Packet Loss Rate: 0.00%
+    RSSI: 60 dBm
+    Initial Phase: 115.54°
+    Final Phase: 122.67°
+    Reported Frequency: 844.875 MHz
+------------------------------------
+No tags detected after 20 queries.
+No tags detected after 20 queries.
+No tags detected after 20 queries.
+No tags detected after 20 queries.
+No tags detected after 20 queries.
+No tags detected after 20 queries.
+No tags detected after 20 queries.
+No tags detected after 20 queries.
+No tags detected after 20 queries.
+No tags detected after 20 queries.
+No tags detected after 20 queries.
+No tags detected after 20 queries.
+No tags detected after 20 queries.
+No tags detected after 20 queries.
+No tags detected after 20 queries.
+No tags detected after 20 queries.
+No tags detected after 20 queries.
+No tags detected after 20 queries.
+No tags detected after 20 queries.
+No tags detected after 20 queries.
+
+Program execution completed, serial port closed

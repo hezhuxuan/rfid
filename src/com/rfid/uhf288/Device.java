@@ -93,9 +93,15 @@ public class Device {
     					      byte MaskMem,byte[]MaskAdr,byte MaskLen, byte[]MaskData,int[]Errorcode,int PortHandle);
 								   
     
-									
+    public native int SetCfgParameter(byte[] comAddr, byte opt, byte cfgNum, byte[]data,int len, int FrmHandle);								
 								   
-								   
+    public native int GetCfgParameter (byte[] comAddr, byte cfgNum,byte[] data, int[] len, int FrmHandle);
+    
+    public native int SetProfile(byte[] comAddr, byte[] Profile, int FrmHandle);
+    public native int SetExtProfile(byte[] comAddr,byte Opt, int[] Profile, int FrmHandle);
+    
+    public native int GetEx10Version(byte[] comAddr,byte[] Version, byte[] ex10Tpye, int FrmHandle);
+    
     public static void main(String[] args) {
 		// TODO Auto-generated method stub
 

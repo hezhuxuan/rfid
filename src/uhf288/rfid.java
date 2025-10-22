@@ -1,20 +1,15 @@
 package uhf288;
 
-import java.lang.reflect.Array;
-import com.rfid.uhf288.Device.*;
-import java.io.FileWriter;
+import com.rfid.uhf288.Device;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 public class rfid {
-
-    // ... (其他方法和常量保持不变)
 
     /**
      * Set reader frequency region
@@ -56,6 +51,20 @@ public class rfid {
 
 
     /**
+     * 辅助函数：将十六进制字符串转换为字节数组
+     * @param s 十六进制字符串
+     * @return 对应的字节数组
+     */
+    public static byte[] hexStringToByteArray(String s) {
+        int len = s.length();
+        byte[] data = new byte[len / 2];
+        for (int i = 0; i < len; i += 2) {
+            data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4)
+                                 + Character.digit(s.charAt(i+1), 16));
+        }
+        return data;
+    }
+    /**
      * Frequency band constants
      */
     private static final byte BAND_CHINESE1 = (byte)0x80; // 10000000 in binary (bit7=1, bit6=0)
@@ -80,13 +89,40 @@ public class rfid {
      * @param args Command line arguments
      */
     public static void main(String[] args) {
-        // ... (原有的初始化代码保持不变)
+
+        // --- START: CODE FOR FILE REDIRECTION ---
+        // 1. 检查是否在命令行中提供了文件名参数
+        if (args.length == 0) {
+            System.err.println("错误: 未指定输出文件名。");
+            System.err.println("用法: java uhf288.rfid <filename.txt>");
+            return; // 如果没有提供文件名，则退出程序
+        }
+        String outputFileName = args[0];
+
+        // 2. 尝试将 System.out 重定向到指定文件
+        try {
+            // 创建一个新的 PrintStream 用于写入文件
+            PrintStream fileOut = new PrintStream(new FileOutputStream(outputFileName));
+            
+            // 重定向标准输出流
+            System.setOut(fileOut);
+            
+            // (可选) 同时也将标准错误流重定向到同一个文件
+            System.setErr(fileOut);
+
+        } catch (IOException e) {
+            System.err.println("错误: 无法写入文件 " + outputFileName);
+            e.printStackTrace();
+            return; // 如果文件无法打开，则退出程序
+        }
+        // --- END: CODE FOR FILE REDIRECTION ---
+
 
         // 1. Serial port communication initialization
         System.loadLibrary("com_rfid_uhf288_Device");
         com.rfid.uhf288.Device reader = new com.rfid.uhf288.Device();
 
-        int Port = 5; // COM1
+        int Port = 5; // COM5
         byte[] comAddr = new byte[1];
         comAddr[0] = (byte) 255;
         byte baud = 5; // 57600bps
@@ -126,23 +162,49 @@ public class rfid {
             return;
         }
 
-        // 3. 执行标签读取操作和数据统计
+        byte opt = 1;//设置并保存
+        int[] profileToSet = new int[] { 11 }; //PR_ASK, pie: 2.0, tari_us: 7.5, lf_khz: 640, M: 1（FM0）
+        result = reader.SetExtProfile(comAddr, (byte) opt, profileToSet, PortHandle[0]);
+        if (result != 0) {
+            System.out.println("Failed to set profile, error code: " + result);
+            reader.CloseSpecComPort(PortHandle[0]);
+            return;
+        } else {
+            System.out.println("Profile set successfully.");
+        }   
 
-        // EPC C1-G2 standard tag reading parameters
-        byte QValue = (byte) 0x12; //0001 0010 -> Q=2 可读取标签为2^Q个
-        byte Session = (byte) 0x00; //确保每次盘存都从SL=0开始
-        byte MaskMem =0;
+        
+        // 定义要读取的特定EPC
+        // String targetEpcString = "E2806894000050241888B0AE";
+        
+        // --- 配置 Inventory_G2 的通用参数 ---
+        byte QValue = (byte) 0x12; // Q=2, 返回相位
+        byte Session = (byte) 0x00; // S0
+        byte Target = 0;
+        byte InAnt = (byte)0x01; // 天线1
+        byte Scantime = 1;       // 短扫描时间
+        byte FastFlag = 0;
+        
+        // --- 配置 Inventory_G2 的Mask参数，用于筛选特定EPC ---
+        byte MaskMem = 1;                     // 1 = EPC内存区
         byte[] MaskAdr = new byte[2];
-        byte MaskLen = 0;
+        MaskAdr[0] = 0x00;
+        MaskAdr[1] = 0x20;                    // 起始地址 32 bits (跳过CRC和PC)
+        // byte MaskLen = (byte) (targetEpcString.length() * 4); // EPC长度 (96 bits)
+        byte MaskLen = 0; // 没有指定标签
         byte[] MaskData = new byte[256];
-        byte MaskFlag = 0;
+        
+        // 将EPC字符串转换为字节数组，并复制到MaskData中
+        // byte[] targetEpcBytes = hexStringToByteArray(targetEpcString);
+
+        // System.arraycopy(targetEpcBytes, 0, MaskData, 0, targetEpcBytes.length); //有指定标签
+        
+        byte MaskFlag = 0;                    // 1 = 启用Mask功能
+        
+        // --- TID参数 (如果不需要读取TID，可以禁用) ---
         byte AdrTID = 0;
         byte LenTID = 6;
-        byte TIDFlag = 1;
-        byte Target = 0;
-        byte InAnt = (byte)0x01; // Assuming antenna 1
-        byte Scantime = 2; // 较短的盘存时间
-        byte FastFlag = 0;
+        byte TIDFlag = 1; // 1 = 读取TID, 0 = 不读取TID
         byte[] pEPCList = new byte[20000];
         int[] Totallen = new int[1];
         int[] CardNum = new int[1];
@@ -151,24 +213,21 @@ public class rfid {
         result = reader.SetAntennaMultiplexing(comAddr, InAnt, PortHandle[0]);
         System.out.println("Set antenna multiplexing: " + result);
 
-        final int NUM_QUERIES_PER_FREQ = 5; // 每个频点发送的查询命令次数
+
+
+        final int NUM_QUERIES_PER_FREQ = 1; // 每个频点发送的查询命令次数
 
         // 循环测试两个频段 (0: Chinese Band 1, 1: Chinese Band 2)
         for (int bandIndex = 0; bandIndex < 2; bandIndex++) {
-            // String bandName = (bandIndex == 0) ? "Chinese Band 1 (840MHz range)" : "Chinese Band 2 (920MHz range)";
-            // byte currentBand = (bandIndex == 0) ? BAND_CHINESE1 : BAND_CHINESE2;
-
-            // System.out.println("\n=== Testing " + bandName + " - Individual Frequency Points ===");
-
             for (int freqPoint = 0; freqPoint <= 19; freqPoint++) {
                 byte dmaxfre_single = 0;
                 byte dminfre_single = 0;
                 if(bandIndex==0){
-                dmaxfre_single = (byte) (0x80 | (freqPoint & 0x3F));
-                dminfre_single = (byte) (0x00 | (freqPoint & 0x3F)); 
+                    dmaxfre_single = (byte) (0x80 | (freqPoint & 0x3F));
+                    dminfre_single = (byte) (0x00 | (freqPoint & 0x3F)); 
                 }else{
-                dmaxfre_single = (byte) (0x00 | (freqPoint & 0x3F)); 
-                dminfre_single  = (byte) (0x40 | (freqPoint & 0x3F)); 
+                    dmaxfre_single = (byte) (0x00 | (freqPoint & 0x3F)); 
+                    dminfre_single  = (byte) (0x40 | (freqPoint & 0x3F)); 
                 }
                 
                 result = reader.SetRegion(comAddr, dmaxfre_single, dminfre_single, PortHandle[0]);
@@ -177,10 +236,6 @@ public class rfid {
                     continue;
                 }
                 
-                // System.out.println("Current antenna configuration (Ant): " + (InAnt & 0xFF));
-                // System.out.println("Current Tx Power (powerdBm): " + powerdBm[0] + " dBm");
-                // System.out.println("Current Inventory Scan Time (InventoryScanTime): " + InventoryScanTime[0]);
-
                 // 用于存储当前频点下所有标签的信息
                 Map<String, TagInfo> tagDataMap = new HashMap<>();
 
@@ -190,16 +245,8 @@ public class rfid {
                                                 AdrTID, LenTID, TIDFlag, Target, InAnt, Scantime, FastFlag, pEPCList,
                                                 Ant, Totallen, CardNum, PortHandle[0]);
 
-                    // if (result == 0) { // 即使没有标签，也可能返回0
-                    //     System.out.println("Tag inventory result (query " + (queryCount + 1) + "): " + result + ", CardNum: " + CardNum[0]);
-                    // } else {
-                    //     System.out.println("Tag inventory result (query " + (queryCount + 1) + "): " + result);
-                    // }
-
                     if (CardNum[0] > 0) {
-                        // System.out.println("Tags detected in this query: " + CardNum[0]);
                         Set<String> uniqueEPCsThisQuery = new HashSet<>();
-                        // System.out.println("  Query " + (queryCount + 1) + ": Detected " + CardNum[0] + " tag(s)");
                         int m = 0;
                         for (int index = 0; index < CardNum[0]; index++) {
                             // 解析EPC数据
@@ -218,20 +265,18 @@ public class rfid {
                                 EPCstr += hex;
                             }
                             EPCstr = EPCstr.toUpperCase();
+
                             if (!uniqueEPCsThisQuery.contains(EPCstr)) {
                                 uniqueEPCsThisQuery.add(EPCstr); // 标记为已处理
-
                                 // 获取或创建TagInfo对象
                                 TagInfo currentTagInfo = tagDataMap.getOrDefault(EPCstr, new TagInfo());
                                 currentTagInfo.readCount++; // 只有在本次查询中第一次遇到该EPC时才增加读取次数
-                                tagDataMap.put(EPCstr, currentTagInfo); // 更新Map中的数据 (即使没有修改也确保存在)
+                                tagDataMap.put(EPCstr, currentTagInfo);
                             }
 
                             // 获取或创建TagInfo对象
-                            TagInfo currentTagInfo = tagDataMap.getOrDefault(EPCstr, new TagInfo());
-                            // currentTagInfo.readCount++; // 增加读取次数
-                            // System.out.println("  Detected Tag EPC: " + EPCstr + " (Total Reads: " + currentTagInfo.readCount + ")");
-
+                            TagInfo currentTagInfo = tagDataMap.get(EPCstr);
+                            
                             // 更新RSSI和相位（只保留最后一次查询结果）
                             currentTagInfo.rssi = pEPCList[m++] & 255; // RSSI
                             final double PHASE_UNIT = 0.087;
@@ -240,11 +285,11 @@ public class rfid {
                             currentTagInfo.initialPhaseDegrees = initialPhaseRaw * PHASE_UNIT;
                             currentTagInfo.finalPhaseDegrees = finalPhaseRaw * PHASE_UNIT;
 
-                            // 获取并解析 3 字节的频点信息 (m 移动 3 字节)
+                            // 获取并解析 3 字节的频点信息
                             int currentTagFreq = ((pEPCList[m++] & 0xFF) << 16) | ((pEPCList[m++] & 0xFF) << 8) | (pEPCList[m++] & 0xFF);
                             currentTagInfo.frequencyMHz = currentTagFreq / 1000.0;
 
-                            // 读取用户数据 (每次都尝试读取，并更新为最后一次读取到的数据)
+                            // 读取用户数据
                             byte ENum = (byte) 255;
                             byte Mem = 1;
                             byte WordPtr = 2;
@@ -259,7 +304,7 @@ public class rfid {
                             int[] Errorcode = new int[1];
 
                             int readResult = reader.ReadData_G2(comAddr, epc, ENum, Mem, WordPtr, Num, Password,
-                                                            MaskMem, MaskAdr, MaskLen, MaskData, Data, Errorcode, PortHandle[0]);
+                                                                MaskMem, MaskAdr, MaskLen, MaskData, Data, Errorcode, PortHandle[0]);
 
                             if (readResult == 0) {
                                 String Memdata = "";
@@ -275,14 +320,12 @@ public class rfid {
                             } else {
                                 currentTagInfo.userData = "Read Failed (" + readResult + ")";
                             }
-
                             tagDataMap.put(EPCstr, currentTagInfo); // 更新Map中的数据
                         }
                     }
                 }
 
                 // 在当前频点所有查询结束后，打印统计结果
-                // System.out.println("\n--- Summary for Frequency Point " + freqPoint + " (" + frequencyMHz + " MHz) ---");
                 if (tagDataMap.isEmpty()) {
                     System.out.println("No tags detected after " + NUM_QUERIES_PER_FREQ + " queries.");
                 } else {
@@ -300,7 +343,6 @@ public class rfid {
                         System.out.printf("    Initial Phase: %.2f°\n", info.initialPhaseDegrees);
                         System.out.printf("    Final Phase: %.2f°\n", info.finalPhaseDegrees);
                         System.out.printf("    Reported Frequency: %.3f MHz\n", info.frequencyMHz);
-                        // System.out.println("    User Data: " + info.userData);
                         System.out.println("------------------------------------");
                     }
                 }

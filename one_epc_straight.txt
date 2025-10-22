@@ -1,0 +1,328 @@
+Open serial port: 0
+Get reader information: 0
+Firmware Version: V1.24
+Antenna 1
+Antenna Connection Status: 1
+Set antenna multiplexing: 0
+  Tag EPC: E2806894200050241888B0AE
+    Reads: 20/20
+    Packet Loss Rate: 0.00%
+    RSSI: 86 dBm
+    Initial Phase: 345.91°
+    Final Phase: 345.83°
+    Reported Frequency: 840.125 MHz
+------------------------------------
+  Tag EPC: E2806894200050241888B0AE
+    Reads: 20/20
+    Packet Loss Rate: 0.00%
+    RSSI: 86 dBm
+    Initial Phase: 172.35°
+    Final Phase: 172.00°
+    Reported Frequency: 840.375 MHz
+------------------------------------
+  Tag EPC: E2806894200050241888B0AE
+    Reads: 20/20
+    Packet Loss Rate: 0.00%
+    RSSI: 86 dBm
+    Initial Phase: 354.87°
+    Final Phase: 354.87°
+    Reported Frequency: 840.625 MHz
+------------------------------------
+  Tag EPC: E2806894200050241888B0AE
+    Reads: 20/20
+    Packet Loss Rate: 0.00%
+    RSSI: 86 dBm
+    Initial Phase: 2.96°
+    Final Phase: 3.05°
+    Reported Frequency: 840.875 MHz
+------------------------------------
+  Tag EPC: E2806894200050241888B0AE
+    Reads: 20/20
+    Packet Loss Rate: 0.00%
+    RSSI: 86 dBm
+    Initial Phase: 7.92°
+    Final Phase: 8.09°
+    Reported Frequency: 841.125 MHz
+------------------------------------
+  Tag EPC: E2806894200050241888B0AE
+    Reads: 20/20
+    Packet Loss Rate: 0.00%
+    RSSI: 87 dBm
+    Initial Phase: 12.61°
+    Final Phase: 12.53°
+    Reported Frequency: 841.375 MHz
+------------------------------------
+  Tag EPC: E2806894200050241888B0AE
+    Reads: 20/20
+    Packet Loss Rate: 0.00%
+    RSSI: 87 dBm
+    Initial Phase: 17.49°
+    Final Phase: 17.66°
+    Reported Frequency: 841.625 MHz
+------------------------------------
+  Tag EPC: E2806894200050241888B0AE
+    Reads: 20/20
+    Packet Loss Rate: 0.00%
+    RSSI: 87 dBm
+    Initial Phase: 200.01°
+    Final Phase: 200.54°
+    Reported Frequency: 841.875 MHz
+------------------------------------
+  Tag EPC: E2806894200050241888B0AE
+    Reads: 20/20
+    Packet Loss Rate: 0.00%
+    RSSI: 87 dBm
+    Initial Phase: 26.97°
+    Final Phase: 26.71°
+    Reported Frequency: 842.125 MHz
+------------------------------------
+  Tag EPC: E2806894200050241888B0AE
+    Reads: 20/20
+    Packet Loss Rate: 0.00%
+    RSSI: 87 dBm
+    Initial Phase: 31.93°
+    Final Phase: 31.76°
+    Reported Frequency: 842.375 MHz
+------------------------------------
+  Tag EPC: E2806894200050241888B0AE
+    Reads: 20/20
+    Packet Loss Rate: 0.00%
+    RSSI: 87 dBm
+    Initial Phase: 214.11°
+    Final Phase: 214.63°
+    Reported Frequency: 842.625 MHz
+------------------------------------
+  Tag EPC: E2806894200050241888B0AE
+    Reads: 20/20
+    Packet Loss Rate: 0.00%
+    RSSI: 87 dBm
+    Initial Phase: 41.50°
+    Final Phase: 41.32°
+    Reported Frequency: 842.875 MHz
+------------------------------------
+  Tag EPC: E2806894200050241888B0AE
+    Reads: 20/20
+    Packet Loss Rate: 0.00%
+    RSSI: 87 dBm
+    Initial Phase: 46.63°
+    Final Phase: 46.63°
+    Reported Frequency: 843.125 MHz
+------------------------------------
+  Tag EPC: E2806894200050241888B0AE
+    Reads: 20/20
+    Packet Loss Rate: 0.00%
+    RSSI: 87 dBm
+    Initial Phase: 51.76°
+    Final Phase: 51.42°
+    Reported Frequency: 843.375 MHz
+------------------------------------
+  Tag EPC: E2806894200050241888B0AE
+    Reads: 20/20
+    Packet Loss Rate: 0.00%
+    RSSI: 87 dBm
+    Initial Phase: 234.20°
+    Final Phase: 234.90°
+    Reported Frequency: 843.625 MHz
+------------------------------------
+  Tag EPC: E2806894200050241888B0AE
+    Reads: 20/20
+    Packet Loss Rate: 0.00%
+    RSSI: 88 dBm
+    Initial Phase: 61.77°
+    Final Phase: 61.60°
+    Reported Frequency: 843.875 MHz
+------------------------------------
+  Tag EPC: E2806894200050241888B0AE
+    Reads: 20/20
+    Packet Loss Rate: 0.00%
+    RSSI: 88 dBm
+    Initial Phase: 244.21°
+    Final Phase: 244.38°
+    Reported Frequency: 844.125 MHz
+------------------------------------
+  Tag EPC: E2806894200050241888B0AE
+    Reads: 20/20
+    Packet Loss Rate: 0.00%
+    RSSI: 88 dBm
+    Initial Phase: 71.77°
+    Final Phase: 71.60°
+    Reported Frequency: 844.375 MHz
+------------------------------------
+  Tag EPC: E2806894200050241888B0AE
+    Reads: 20/20
+    Packet Loss Rate: 0.00%
+    RSSI: 88 dBm
+    Initial Phase: 254.39°
+    Final Phase: 254.39°
+    Reported Frequency: 844.625 MHz
+------------------------------------
+  Tag EPC: E2806894200050241888B0AE
+    Reads: 20/20
+    Packet Loss Rate: 0.00%
+    RSSI: 88 dBm
+    Initial Phase: 259.52°
+    Final Phase: 259.61°
+    Reported Frequency: 844.875 MHz
+------------------------------------
+  Tag EPC: E2806894200050241888B0AE
+    Reads: 20/20
+    Packet Loss Rate: 0.00%
+    RSSI: 100 dBm
+    Initial Phase: 318.07°
+    Final Phase: 318.07°
+    Reported Frequency: 920.125 MHz
+------------------------------------
+  Tag EPC: E2806894200050241888B0AE
+    Reads: 20/20
+    Packet Loss Rate: 0.00%
+    RSSI: 100 dBm
+    Initial Phase: 144.07°
+    Final Phase: 143.38°
+    Reported Frequency: 920.375 MHz
+------------------------------------
+  Tag EPC: E2806894200050241888B0AE
+    Reads: 20/20
+    Packet Loss Rate: 0.00%
+    RSSI: 100 dBm
+    Initial Phase: 325.90°
+    Final Phase: 325.99°
+    Reported Frequency: 920.625 MHz
+------------------------------------
+  Tag EPC: E2806894200050241888B0AE
+    Reads: 20/20
+    Packet Loss Rate: 0.00%
+    RSSI: 100 dBm
+    Initial Phase: 329.90°
+    Final Phase: 330.08°
+    Reported Frequency: 920.875 MHz
+------------------------------------
+  Tag EPC: E2806894200050241888B0AE
+    Reads: 20/20
+    Packet Loss Rate: 0.00%
+    RSSI: 100 dBm
+    Initial Phase: 334.69°
+    Final Phase: 334.43°
+    Reported Frequency: 921.125 MHz
+------------------------------------
+  Tag EPC: E2806894200050241888B0AE
+    Reads: 20/20
+    Packet Loss Rate: 0.00%
+    RSSI: 100 dBm
+    Initial Phase: 338.78°
+    Final Phase: 338.86°
+    Reported Frequency: 921.375 MHz
+------------------------------------
+  Tag EPC: E2806894200050241888B0AE
+    Reads: 20/20
+    Packet Loss Rate: 0.00%
+    RSSI: 100 dBm
+    Initial Phase: 342.95°
+    Final Phase: 342.52°
+    Reported Frequency: 921.625 MHz
+------------------------------------
+  Tag EPC: E2806894200050241888B0AE
+    Reads: 20/20
+    Packet Loss Rate: 0.00%
+    RSSI: 99 dBm
+    Initial Phase: 347.13°
+    Final Phase: 346.78°
+    Reported Frequency: 921.875 MHz
+------------------------------------
+  Tag EPC: E2806894200050241888B0AE
+    Reads: 20/20
+    Packet Loss Rate: 0.00%
+    RSSI: 99 dBm
+    Initial Phase: 351.04°
+    Final Phase: 351.48°
+    Reported Frequency: 922.125 MHz
+------------------------------------
+  Tag EPC: E2806894200050241888B0AE
+    Reads: 20/20
+    Packet Loss Rate: 0.00%
+    RSSI: 99 dBm
+    Initial Phase: 355.05°
+    Final Phase: 355.40°
+    Reported Frequency: 922.375 MHz
+------------------------------------
+  Tag EPC: E2806894200050241888B0AE
+    Reads: 20/20
+    Packet Loss Rate: 0.00%
+    RSSI: 99 dBm
+    Initial Phase: 3.39°
+    Final Phase: 3.13°
+    Reported Frequency: 922.625 MHz
+------------------------------------
+  Tag EPC: E2806894200050241888B0AE
+    Reads: 20/20
+    Packet Loss Rate: 0.00%
+    RSSI: 99 dBm
+    Initial Phase: 7.48°
+    Final Phase: 7.22°
+    Reported Frequency: 922.875 MHz
+------------------------------------
+  Tag EPC: E2806894200050241888B0AE
+    Reads: 20/20
+    Packet Loss Rate: 0.00%
+    RSSI: 100 dBm
+    Initial Phase: 11.57°
+    Final Phase: 11.31°
+    Reported Frequency: 923.125 MHz
+------------------------------------
+  Tag EPC: E2806894200050241888B0AE
+    Reads: 20/20
+    Packet Loss Rate: 0.00%
+    RSSI: 100 dBm
+    Initial Phase: 15.57°
+    Final Phase: 15.83°
+    Reported Frequency: 923.375 MHz
+------------------------------------
+  Tag EPC: E2806894200050241888B0AE
+    Reads: 20/20
+    Packet Loss Rate: 0.00%
+    RSSI: 100 dBm
+    Initial Phase: 19.92°
+    Final Phase: 19.66°
+    Reported Frequency: 923.625 MHz
+------------------------------------
+  Tag EPC: E2806894200050241888B0AE
+    Reads: 20/20
+    Packet Loss Rate: 0.00%
+    RSSI: 100 dBm
+    Initial Phase: 23.49°
+    Final Phase: 23.66°
+    Reported Frequency: 923.875 MHz
+------------------------------------
+  Tag EPC: E2806894200050241888B0AE
+    Reads: 20/20
+    Packet Loss Rate: 0.00%
+    RSSI: 100 dBm
+    Initial Phase: 28.10°
+    Final Phase: 28.62°
+    Reported Frequency: 924.125 MHz
+------------------------------------
+  Tag EPC: E2806894200050241888B0AE
+    Reads: 20/20
+    Packet Loss Rate: 0.00%
+    RSSI: 101 dBm
+    Initial Phase: 34.63°
+    Final Phase: 34.45°
+    Reported Frequency: 924.375 MHz
+------------------------------------
+  Tag EPC: E2806894200050241888B0AE
+    Reads: 20/20
+    Packet Loss Rate: 0.00%
+    RSSI: 101 dBm
+    Initial Phase: 37.67°
+    Final Phase: 37.32°
+    Reported Frequency: 924.625 MHz
+------------------------------------
+  Tag EPC: E2806894200050241888B0AE
+    Reads: 20/20
+    Packet Loss Rate: 0.00%
+    RSSI: 101 dBm
+    Initial Phase: 42.02°
+    Final Phase: 41.93°
+    Reported Frequency: 924.875 MHz
+------------------------------------
+
+Program execution completed, serial port closed
