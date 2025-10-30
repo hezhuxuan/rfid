@@ -29,27 +29,7 @@ public class rfid {
         return reader.SetRegion(comAddr, dmaxfre, dminfre, PortHandle);
     }
 
-    /**
-     * Calculate frequency value for Chinese band 1
-     * @param freqPoint Frequency point (0-19)
-     * @return Frequency in Hz
-     */
-    private static int calculateChineseBand1Frequency(int freqPoint) {
-        // Chinese band 1: Fs = 840.125 + N * 0.25 (MHz) where N∈ [0, 19]
-        return 840125 + freqPoint * 250; // 840.125MHz + N * 0.25MHz
-    }
-
-    /**
-     * Calculate frequency value for Chinese band 2
-     * @param freqPoint Frequency point (0-19)
-     * @return Frequency in Hz
-     */
-    private static int calculateChineseBand2Frequency(int freqPoint) {
-        // Chinese band 2: Fs = 920.125 + N * 0.25 (MHz) where N∈ [0, 19]
-        return 920125 + freqPoint * 250; // 920.125MHz + N * 0.25MHz
-    }
-
-
+    
     /**
      * 辅助函数：将十六进制字符串转换为字节数组
      * @param s 十六进制字符串
@@ -64,12 +44,7 @@ public class rfid {
         }
         return data;
     }
-    /**
-     * Frequency band constants
-     */
-    private static final byte BAND_CHINESE1 = (byte)0x80; // 10000000 in binary (bit7=1, bit6=0)
-    private static final byte BAND_CHINESE2 =(byte)0x00; // 00000000 in binary (bit7=0, bit6=0)
-
+  
 
     // 定义一个内部类来存储标签的详细信息
     static class TagInfo {
@@ -162,9 +137,10 @@ public class rfid {
             return;
         }
 
-        byte opt = 1;//设置并保存
-        int[] profileToSet = new int[] { 11 }; //PR_ASK, pie: 2.0, tari_us: 7.5, lf_khz: 640, M: 1（FM0）
-        result = reader.SetExtProfile(comAddr, (byte) opt, profileToSet, PortHandle[0]);
+        // byte opt = 1;//设置并保存
+        byte[] profileToSet = new byte[1];
+        profileToSet[0] =(byte) 0xCD; // Profile 1
+        result = reader.SetProfile(comAddr, profileToSet, PortHandle[0]);
         if (result != 0) {
             System.out.println("Failed to set profile, error code: " + result);
             reader.CloseSpecComPort(PortHandle[0]);
@@ -175,7 +151,7 @@ public class rfid {
 
         
         // 定义要读取的特定EPC
-        // String targetEpcString = "E2806894000050241888B0AE";
+        String targetEpcString = "E2806894000050315997199E";
         
         // --- 配置 Inventory_G2 的通用参数 ---
         byte QValue = (byte) 0x12; // Q=2, 返回相位
@@ -190,21 +166,20 @@ public class rfid {
         byte[] MaskAdr = new byte[2];
         MaskAdr[0] = 0x00;
         MaskAdr[1] = 0x20;                    // 起始地址 32 bits (跳过CRC和PC)
-        // byte MaskLen = (byte) (targetEpcString.length() * 4); // EPC长度 (96 bits)
-        byte MaskLen = 0; // 没有指定标签
+        byte MaskLen = (byte) (targetEpcString.length() * 4); // EPC长度 (96 bits)
         byte[] MaskData = new byte[256];
         
         // 将EPC字符串转换为字节数组，并复制到MaskData中
-        // byte[] targetEpcBytes = hexStringToByteArray(targetEpcString);
-
-        // System.arraycopy(targetEpcBytes, 0, MaskData, 0, targetEpcBytes.length); //有指定标签
+        byte[] targetEpcBytes = hexStringToByteArray(targetEpcString);
+        System.arraycopy(targetEpcBytes, 0, MaskData, 0, targetEpcBytes.length);
         
-        byte MaskFlag = 0;                    // 1 = 启用Mask功能
+        byte MaskFlag = 1;                    // 1 = 启用Mask功能
         
         // --- TID参数 (如果不需要读取TID，可以禁用) ---
         byte AdrTID = 0;
         byte LenTID = 6;
         byte TIDFlag = 1; // 1 = 读取TID, 0 = 不读取TID
+        
         byte[] pEPCList = new byte[20000];
         int[] Totallen = new int[1];
         int[] CardNum = new int[1];
@@ -213,138 +188,140 @@ public class rfid {
         result = reader.SetAntennaMultiplexing(comAddr, InAnt, PortHandle[0]);
         System.out.println("Set antenna multiplexing: " + result);
 
+        final int NUM_QUERIES_PER_FREQ = 20; // 每个频点发送的查询命令次数
 
+        for (int freqPoint = 0; freqPoint <=49; freqPoint++) {
+          
+            byte dmaxfre_single = (byte) (0x00 | (freqPoint & 0x3F)); // US band
+            byte dminfre_single = (byte) (0x80 | (freqPoint & 0x3F)); // US band  
+            result = reader.SetRegion(comAddr, dmaxfre_single, dminfre_single, PortHandle[0]);
+            if (result != 0) {
+                System.out.println("Failed to set frequency point " + freqPoint + ": " + result);
+                continue;
+            }
+            
+            // 用于存储当前频点下所有标签的信息
+            Map<String, TagInfo> tagDataMap = new HashMap<>();
 
-        final int NUM_QUERIES_PER_FREQ = 1; // 每个频点发送的查询命令次数
-
-        // 循环测试两个频段 (0: Chinese Band 1, 1: Chinese Band 2)
-        for (int bandIndex = 0; bandIndex < 2; bandIndex++) {
-            for (int freqPoint = 0; freqPoint <= 19; freqPoint++) {
-                byte dmaxfre_single = 0;
-                byte dminfre_single = 0;
-                if(bandIndex==0){
-                    dmaxfre_single = (byte) (0x80 | (freqPoint & 0x3F));
-                    dminfre_single = (byte) (0x00 | (freqPoint & 0x3F)); 
-                }else{
-                    dmaxfre_single = (byte) (0x00 | (freqPoint & 0x3F)); 
-                    dminfre_single  = (byte) (0x40 | (freqPoint & 0x3F)); 
-                }
+            for (int queryCount = 0; queryCount < NUM_QUERIES_PER_FREQ; queryCount++) {
                 
-                result = reader.SetRegion(comAddr, dmaxfre_single, dminfre_single, PortHandle[0]);
-                if (result != 0) {
-                    System.out.println("Failed to set frequency point " + freqPoint + ": " + result);
-                    continue;
-                }
+                result = reader.Inventory_G2(comAddr, QValue, Session, MaskMem, MaskAdr, MaskLen, MaskData, MaskFlag,
+                                            AdrTID, LenTID, TIDFlag, Target, InAnt, Scantime, FastFlag, pEPCList,
+                                            Ant, Totallen, CardNum, PortHandle[0]);
+                System.out.println("Inventory_G2 result: 0x" + Integer.toHexString(result & 0xFFFF).toUpperCase());
                 
-                // 用于存储当前频点下所有标签的信息
-                Map<String, TagInfo> tagDataMap = new HashMap<>();
+                if (CardNum[0] > 0) {
+                    Set<String> uniqueEPCsThisQuery = new HashSet<>();
+                    int m = 0;
+                    for (int index = 0; index < CardNum[0]; index++) {
+                        // --- START: 暂存盘存数据 ---
+                        // 为了应对ReadData失败后需要丢弃数据的情况，我们先解析并暂存
+                        int current_m = m; // 记录当前指针位置
+                        int len_byte = pEPCList[m++] & 0xFF;
+                        int epclen = len_byte & 0x3F;
+                        String EPCstr = "";
+                        byte[] epc = new byte[epclen];
+                        for (int n = 0; n < epclen; n++) {
+                            byte bbt = pEPCList[m++];
+                            epc[n] = bbt;
+                            String hex = Integer.toHexString(bbt & 255);
+                            if (hex.length() == 1) {
+                                hex = "0" + hex;
+                            }
+                            EPCstr += hex;
+                        }
+                        EPCstr = EPCstr.toUpperCase();
+                        
+                        // 暂存RSSI和相位等信息
+                        int temp_rssi = pEPCList[m++] & 255;
+                        int temp_initialPhaseRaw = ((pEPCList[m++] & 0xFF) << 8) | (pEPCList[m++] & 0xFF);
+                        int temp_finalPhaseRaw = ((pEPCList[m++] & 0xFF) << 8) | (pEPCList[m++] & 0xFF);
+                        int temp_currentTagFreq = ((pEPCList[m++] & 0xFF) << 16) | ((pEPCList[m++] & 0xFF) << 8) | (pEPCList[m++] & 0xFF);
+                        // --- END: 暂存盘存数据 ---
 
-                for (int queryCount = 0; queryCount < NUM_QUERIES_PER_FREQ; queryCount++) {
-                    // 执行盘存
-                    result = reader.Inventory_G2(comAddr, QValue, Session, MaskMem, MaskAdr, MaskLen, MaskData, MaskFlag,
-                                                AdrTID, LenTID, TIDFlag, Target, InAnt, Scantime, FastFlag, pEPCList,
-                                                Ant, Totallen, CardNum, PortHandle[0]);
+                        
+                        // --- 尝试读取用户数据 ---
+                        byte ENum = (byte) 255;
+                        byte Mem = 1; // USER 存储区
+                        byte WordPtr = 2;
+                        byte Num = 6;
+                        byte[] Password = new byte[4];
+                        byte ReadMaskMem = 2; // 使用EPC进行掩码
+                        byte[] ReadMaskAdr = {0, 0};
+                        byte ReadMaskLen = (byte) (epclen * 8);
+                        byte[] ReadMaskData = new byte[epclen];
+                        System.arraycopy(epc, 0, ReadMaskData, 0, epclen);
+                        byte[] Data = new byte[Num * 2];
+                        int[] Errorcode = new int[1];
 
-                    if (CardNum[0] > 0) {
-                        Set<String> uniqueEPCsThisQuery = new HashSet<>();
-                        int m = 0;
-                        for (int index = 0; index < CardNum[0]; index++) {
-                            // 解析EPC数据
-                            int len_byte = pEPCList[m++] & 0xFF;
-                            int epclen = len_byte & 0x3F;
-                            String EPCstr = "";
-                            byte[] epc = new byte[epclen];
+                        int readResult = reader.ReadData_G2(comAddr, epc, ENum, Mem, WordPtr, Num, Password,
+                                                            ReadMaskMem, ReadMaskAdr, ReadMaskLen, ReadMaskData, Data, Errorcode, PortHandle[0]);
+                        System.out.println("ReadData_G2 result for " + EPCstr + ": 0x" + Integer.toHexString(readResult & 0xFFFF).toUpperCase());
 
-                            for (int n = 0; n < epclen; n++) {
-                                byte bbt = pEPCList[m++];
-                                epc[n] = bbt;
+                        // =================================================================
+                        // =============== START: 核心逻辑修改 ==============================
+                        // === 只有在 ReadData_G2 成功时 (返回0)，才更新所有信息 =========
+                        // =================================================================
+                        if (readResult == 0) {
+                            // 获取或创建TagInfo对象
+                            TagInfo currentTagInfo = tagDataMap.getOrDefault(EPCstr, new TagInfo());
+
+                            // 检查是否是本次查询中第一次遇到该EPC，如果是，则增加读取计数
+                            if (!uniqueEPCsThisQuery.contains(EPCstr)) {
+                                uniqueEPCsThisQuery.add(EPCstr);
+                                currentTagInfo.readCount++;
+                            }
+                            
+                            // 更新RSSI和相位等从盘存中获取的信息
+                            currentTagInfo.rssi = temp_rssi;
+                            final double PHASE_UNIT = 0.087;
+                            currentTagInfo.initialPhaseDegrees = temp_initialPhaseRaw * PHASE_UNIT;
+                            currentTagInfo.finalPhaseDegrees = temp_finalPhaseRaw * PHASE_UNIT;
+                            currentTagInfo.frequencyMHz = temp_currentTagFreq / 1000.0;
+
+                            // 解析并更新用户数据
+                            String Memdata = "";
+                            for (int p = 0; p < Num * 2; p++) {
+                                byte bbt = Data[p];
                                 String hex = Integer.toHexString(bbt & 255);
                                 if (hex.length() == 1) {
                                     hex = "0" + hex;
                                 }
-                                EPCstr += hex;
+                                Memdata += hex;
                             }
-                            EPCstr = EPCstr.toUpperCase();
-
-                            if (!uniqueEPCsThisQuery.contains(EPCstr)) {
-                                uniqueEPCsThisQuery.add(EPCstr); // 标记为已处理
-                                // 获取或创建TagInfo对象
-                                TagInfo currentTagInfo = tagDataMap.getOrDefault(EPCstr, new TagInfo());
-                                currentTagInfo.readCount++; // 只有在本次查询中第一次遇到该EPC时才增加读取次数
-                                tagDataMap.put(EPCstr, currentTagInfo);
-                            }
-
-                            // 获取或创建TagInfo对象
-                            TagInfo currentTagInfo = tagDataMap.get(EPCstr);
+                            currentTagInfo.userData = Memdata.toUpperCase();
                             
-                            // 更新RSSI和相位（只保留最后一次查询结果）
-                            currentTagInfo.rssi = pEPCList[m++] & 255; // RSSI
-                            final double PHASE_UNIT = 0.087;
-                            int initialPhaseRaw = ((pEPCList[m++] & 0xFF) << 8) | (pEPCList[m++] & 0xFF);
-                            int finalPhaseRaw = ((pEPCList[m++] & 0xFF) << 8) | (pEPCList[m++] & 0xFF);
-                            currentTagInfo.initialPhaseDegrees = initialPhaseRaw * PHASE_UNIT;
-                            currentTagInfo.finalPhaseDegrees = finalPhaseRaw * PHASE_UNIT;
-
-                            // 获取并解析 3 字节的频点信息
-                            int currentTagFreq = ((pEPCList[m++] & 0xFF) << 16) | ((pEPCList[m++] & 0xFF) << 8) | (pEPCList[m++] & 0xFF);
-                            currentTagInfo.frequencyMHz = currentTagFreq / 1000.0;
-
-                            // 读取用户数据
-                            byte ENum = (byte) 255;
-                            byte Mem = 1;
-                            byte WordPtr = 2;
-                            byte Num = 6;
-                            byte[] Password = new byte[4];
-                            MaskMem = 2;
-                            MaskAdr[0] = 0;
-                            MaskAdr[1] = 0;
-                            MaskLen = (byte) (epclen * 8);
-                            System.arraycopy(epc, 0, MaskData, 0, epclen);
-                            byte[] Data = new byte[Num * 2];
-                            int[] Errorcode = new int[1];
-
-                            int readResult = reader.ReadData_G2(comAddr, epc, ENum, Mem, WordPtr, Num, Password,
-                                                                MaskMem, MaskAdr, MaskLen, MaskData, Data, Errorcode, PortHandle[0]);
-
-                            if (readResult == 0) {
-                                String Memdata = "";
-                                for (int p = 0; p < Num * 2; p++) {
-                                    byte bbt = Data[p];
-                                    String hex = Integer.toHexString(bbt & 255);
-                                    if (hex.length() == 1) {
-                                        hex = "0" + hex;
-                                    }
-                                    Memdata += hex;
-                                }
-                                currentTagInfo.userData = Memdata.toUpperCase();
-                            } else {
-                                currentTagInfo.userData = "Read Failed (" + readResult + ")";
-                            }
-                            tagDataMap.put(EPCstr, currentTagInfo); // 更新Map中的数据
+                            // 将更新后的信息存回Map
+                            tagDataMap.put(EPCstr, currentTagInfo);
                         }
+                        // 如果 readResult != 0, 则什么都不做，直接忽略这次盘存结果
+                        // =================================================================
+                        // =============== END: 核心逻辑修改 ================================
+                        // =================================================================
                     }
                 }
+            }
 
-                // 在当前频点所有查询结束后，打印统计结果
-                if (tagDataMap.isEmpty()) {
-                    System.out.println("No tags detected after " + NUM_QUERIES_PER_FREQ + " queries.");
-                } else {
-                    for (Map.Entry<String, TagInfo> entry : tagDataMap.entrySet()) {
-                        String epc = entry.getKey();
-                        TagInfo info = entry.getValue();
+            // 在当前频点所有查询结束后，打印统计结果
+            if (tagDataMap.isEmpty()) {
+                System.out.println("No tags with successfully read user data detected after " + NUM_QUERIES_PER_FREQ + " queries.");
+            } else {
+                for (Map.Entry<String, TagInfo> entry : tagDataMap.entrySet()) {
+                    String epc = entry.getKey();
+                    TagInfo info = entry.getValue();
 
-                        double successRate = (double) info.readCount / NUM_QUERIES_PER_FREQ;
-                        double packetLossRate = 1.0 - successRate;
+                    double successRate = (double) info.readCount / NUM_QUERIES_PER_FREQ;
+                    double packetLossRate = 1.0 - successRate;
 
-                        System.out.println("  Tag EPC: " + epc);
-                        System.out.println("    Reads: " + info.readCount + "/" + NUM_QUERIES_PER_FREQ);
-                        System.out.printf("    Packet Loss Rate: %.2f%%\n", packetLossRate * 100);
-                        System.out.println("    RSSI: " + info.rssi + " dBm");
-                        System.out.printf("    Initial Phase: %.2f°\n", info.initialPhaseDegrees);
-                        System.out.printf("    Final Phase: %.2f°\n", info.finalPhaseDegrees);
-                        System.out.printf("    Reported Frequency: %.3f MHz\n", info.frequencyMHz);
-                        System.out.println("------------------------------------");
-                    }
+                    System.out.println("  Tag EPC: " + epc);
+                    System.out.println("    Successful Reads (Inv+ReadUser): " + info.readCount + "/" + NUM_QUERIES_PER_FREQ);
+                    System.out.printf("    Packet Loss Rate: %.2f%%\n", packetLossRate * 100);
+                    System.out.println("    RSSI: " + info.rssi + " dBm");
+                    System.out.printf("    Initial Phase: %.2f°\n", info.initialPhaseDegrees);
+                    System.out.printf("    Final Phase: %.2f°\n", info.finalPhaseDegrees);
+                    System.out.printf("    Reported Frequency: %.3f MHz\n", info.frequencyMHz);
+                    System.out.println("    User Data: " + info.userData);
+                    System.out.println("------------------------------------");
                 }
             }
         }
