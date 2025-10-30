@@ -1,5 +1,7 @@
 # RFID Data Processing Tool
 
+指定tag读取
+
 This tool processes RFID tag data from text files and organizes it into Excel spreadsheets.
 
 ## Features
